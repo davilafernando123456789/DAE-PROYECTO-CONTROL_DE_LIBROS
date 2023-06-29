@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Formulario de Préstamo</title>
+<!-- Incluir los estilos de Bootstrap -->
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-4">
+    <h2>Formulario de Préstamo</h2>
+    <form action="/Registrar_Prestamo" method="POST">
+    <div class="form-group">
+        <label for="encargado">Encargado:</label>
+        <input type="text" class="form-control" id="encargado" placeholder="Ingrese el nombre del encargado" required>
+    </div>
+    <div class="form-group">
+        <label for="titulo">Libro:</label>
+        <input type="text" class="form-control" id="titulo" placeholder="Ingrese el título del libro" required>
+    </div>
+    <div class="form-group">
+        <label for="nombre">Estudiante:</label>
+        <input type="text" class="form-control" id="nombre" placeholder="Ingrese el nombre del estudiante" required>
+    </div>
+    <div class="form-group">
+        <label for="FechaPrestamo">Fecha de Préstamo:</label>
+        <input type="date" class="form-control" id="FechaPrestamo" required>
+    </div>
+    <div class="form-group">
+        <label for="FechaDevolucion">Fecha de Devolución:</label>
+        <input type="date" class="form-control" id="FechaDevolucion" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Enviar</button>
+    </form>
+</div>
+
+<!-- Incluir los scripts de Bootstrap -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
