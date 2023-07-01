@@ -1,0 +1,85 @@
+{% extends './base.html' %}
+
+{% block title %}Gestion de Cursos{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="row">   
+        <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
+            <h2>Ingreso de Préstamo</h2>
+            <div class="card">
+                <div class="card-body">
+                    <form action="/registrar_prestamo" method="post">
+                        {% csrf_token %}
+                
+                        <label for="id_encargado">Encargado:</label>
+                        <select id="id_encargado" name="encargado">
+                            {% for encargado in encargados %}
+                                <option value="{{ encargado.IdEncargado }}">{{ encargado.Nombre }}</option>
+                            {% endfor %}
+                        </select>
+                        <br>
+                        <label for="id_libro">Libro:</label>
+                        <select id="id_libro" name="libro">
+                            {% for libro in libros %}
+                                <option value="{{ libro.IdLibro }}">{{ libro.Titulo }}</option>
+                            {% endfor %}
+                        </select>
+                        <br>                
+                        <label for="id_estudiante">Estudiante:</label>
+                        <select id="id_estudiante" name="estudiante">
+                            {% for estudiante in estudiantes %}
+                                <option value="{{ estudiante.IdEstudiante }}">{{ estudiante.Nombre }}</option>
+                            {% endfor %}
+                        </select>
+                        <br>
+                
+                        <label for="id_fecha_prestamo">Fecha de préstamo:</label>
+                        <input type="date" id="id_fecha_prestamo" name="fecha_prestamo">
+                        <br>
+                
+                        <label for="id_fecha_devolucion">Fecha de devolución:</label>
+                        <input type="date" id="id_fecha_devolucion" name="fecha_devolucion">
+                        <br>                
+                        <input type="submit" value="Enviar">
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-8 col-xl-8">
+            <form class="d-flex" role="search" action="" method="GET">
+                <input class="form-control me-2" type="search" placeholder="Buscar por título" aria-label="Search" name="titulo">
+                <button class="btn btn-outline-success" type="submit">Buscar</button>
+            </form>
+            <h2>Listado de Préstamos</h2>
+            <table class="table table-dark table-sm">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Encargado</th>
+                        <th>Libro</th>
+                        <th>Estudiante</th>
+                        <th>Fecha de Préstamo</th>
+                        <th>Fecha de Devolución</th>
+                        <th colspan="2">Opciones de Manejo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in prestamos %}
+                    <tr>
+                    <td>{{ p.IdPrestamo }}</td>
+                    <td>{{ p.IdEncargado }}</td>
+                    <td>{{ p.IdLibro }}</td>
+                    <td>{{ p.IdEstudiante }}</td>
+                    <td>{{ p.FechaPrestamo }}</td>
+                    <td>{{ p.FechaDevolucion }}</td>
+                    <td><a href="editar_prestamo/{{p.IdPrestamo}}" class="btn btn-info">Editar</a></td>
+                    <td><a href="eliminarprestamo/{{p.IdPrestamo}}" class="btn btn-danger">Eliminar</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+    </div>
+    </div>
+</div>
+{% endblock %}

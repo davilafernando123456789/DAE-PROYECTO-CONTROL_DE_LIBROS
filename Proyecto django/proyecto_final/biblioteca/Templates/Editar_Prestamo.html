@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-sm-12 col-md-6 col-lg-8 col-xl-8">
+        <h2>Editar Préstamo</h2>
+        <form method="POST" action="">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_encargado">Encargado:</label>
+                <select id="id_encargado" name="encargado" class="form-select" required>
+                    {% for encargado in encargados %}
+                        {% if encargado.IdEncargado == prestamo.IdEncargado.IdEncargado %}
+                            <option value="{{ encargado.IdEncargado }}" selected>{{ encargado.Nombre }}</option>
+                        {% else %}
+                            <option value="{{ encargado.IdEncargado }}">{{ encargado.Nombre }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="id_libro">Libro:</label>
+                <select id="id_libro" name="libro" class="form-select" required>
+                    {% for libro in libros %}
+                        {% if libro.IdLibro == prestamo.IdLibro.IdLibro %}
+                            <option value="{{ libro.IdLibro }}" selected>{{ libro.Titulo }}</option>
+                        {% else %}
+                            <option value="{{ libro.IdLibro }}">{{ libro.Titulo }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="id_estudiante">Estudiante:</label>
+                <select id="id_estudiante" name="estudiante" class="form-select" required>
+                    {% for estudiante in estudiantes %}
+                        {% if estudiante.IdEstudiante == prestamo.IdEstudiante.IdEstudiante %}
+                            <option value="{{ estudiante.IdEstudiante }}" selected>{{ estudiante.Nombre }}</option>
+                        {% else %}
+                            <option value="{{ estudiante.IdEstudiante }}">{{ estudiante.Nombre }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="id_fecha_prestamo">Fecha de préstamo:</label>
+                <input type="date" id="id_fecha_prestamo" name="fecha_prestamo" class="form-control" value="{{ prestamo.FechaPrestamo }}" required>
+            </div>
+            <div class="form-group">
+                <label for="id_fecha_devolucion">Fecha de devolución:</label>
+                <input type="date" id="id_fecha_devolucion" name="fecha_devolucion" class="form-control" value="{{ prestamo.FechaDevolucion }}" required>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Guardar</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
