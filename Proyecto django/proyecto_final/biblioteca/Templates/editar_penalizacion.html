@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="row">
+    <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
+        <h1>Editar Penalización</h1>
+        <div class="card">
+            <div class="card-body">
+                <form method="post" action="" class="needs-validation" novalidate>
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                        <label for="fecha_inicio">Fecha de inicio:</label>
+                        <input type="date" name="fecha_inicio" value="{{ penalizacion.Falseecha_inicio }}" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fecha_final">Fecha final:</label>
+                        <input type="date" name="fecha_final" value="{{ penalizacion.Fecha_final }}" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="estado">Estado:</label>
+                        <select name="estado" class="form-control">
+                            <option value="Moroso" {% if penalizacion.Estado == 'Moroso' %}selected{% endif %}>Moroso</option>
+                            <option value="Apto" {% if penalizacion.Estado == 'Apto' %}selected{% endif %}>Apto</option>
+                        </select>
+                    </div>
+                    
+
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+<!-- listar_devoluciones.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}Gestión de Cursos{% endblock %}
+
+{% block body %}
+
+<div class="col-sm-12 col-md-6 col-lg-8 col-xl-8">
+    <form class="d-flex" role="search" action="" method="GET">
+        <input class="form-control me-2" type="search" placeholder="Buscar por nombre de estudiante" aria-label="Search" name="nombre_estudiante">
+        <button class="btn btn-outline-success" type="submit">Buscar</button>
+    </form>
+    <h2>Listado de Penalizaciones</h2>
+    <table id="tabla-devoluciones" class="table table-dark table-sm">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Estudiante</th>
+                <th>F. Inicio</th>
+                <th>F. Final</th>
+                <th>Estado</th>
+                <th colspan="2">Opciones de Manejo</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in penalizaciones %}
+                <tr onclick="cargarDatosDevolucion(event)" style="cursor: pointer;">
+                    <td>{{ p.IdPenalizacion }}</td>
+                    <td>{{ p.IdEstudiante }}</td>
+                    <td>{{ p.Falseecha_inicio }}</td>
+                    <td>{{ p.Fecha_final }}</td>
+                    <td>{{ p.Estado }}</td>
+                    <td><a href="/editar_penalizacion/{{  p.IdPenalizacion }}" class="btn btn-info">Editar</a></td>
+                    <td><a href="/eliminarpenalizacion/{{ p.IdPenalizacion }}" class="btn btn-danger">Eliminar</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-sm-12 col-md-6 col-lg-8 col-xl-8">
+        <h2>Editar Devolución</h2>
+        <form method="POST" action="/editar_entrega/{{ devolucion.IdDevolucion }}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_prestamo">Prestamo:</label>
+                <select id="id_prestamo" name="prestamo" class="form-select" required>
+                    {% for p in prestamos %}
+                        {% if p.IdPrestamo == devolucion.IdPrestamo.IdPrestamo %}
+                            <option value="{{ p.IdPrestamo }}" selected>{{ p.IdPrestamo }}</option>
+                        {% else %}
+                            <option value="{{ p.IdPrestamo }}">{{ p.IdPrestamo }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="id_fecha_entrega">Fecha de entrega:</label>
+                <input type="date" id="id_fecha_entrega" name="fecha_entrega" class="form-control" value="{{ devolucion.Fecha_entrega }}" required>
+            </div>
+            <div class="form-group">
+                <label for="id_estado">Estado:</label>
+                <select id="id_estado" name="estado" class="form-select" required>
+                    {% if devolucion.Estado == 'Entregado' %}
+                        <option value="Entregado" selected>Entregado</option>
+                        <option value="Falta entregar">Falta entregar</option>
+                    {% else %}
+                        <option value="Entregado">Entregado</option>
+                        <option value="Falta entregar" selected>Falta entregar</option>
+                    {% endif %}
+                </select>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Guardar</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

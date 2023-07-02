@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block body %}
+<div class="row">
+    <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
+        <h2>Ingreso de Préstamo</h2>
+        <div class="card">
+            <div class="card-body">
+                <form action="/registrar_prestamo" method="post" class="needs-validation" novalidate>
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                        <label for="id_encargado">Encargado:</label>
+                        <select id="id_encargado" name="encargado" class="form-control">
+                            {% for encargado in encargados %}
+                            <option value="{{ encargado.IdEncargado }}">{{ encargado.Nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_libro">Libro:</label>
+                        <select id="id_libro" name="libro" class="form-control">
+                            {% for libro in libros %}
+                            <option value="{{ libro.IdLibro }}">{{ libro.Titulo }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_estudiante">Estudiante:</label>
+                        <select id="id_estudiante" name="estudiante" class="form-control">
+                            {% for estudiante in estudiantes %}
+                            <option value="{{ estudiante.IdEstudiante }}">
+                                {{ estudiante.IdEstudiante }} - {{ estudiante.Nombre }}
+                                {% for penalizacion in penalizaciones %}
+                                {% if penalizacion.IdEstudiante_id == estudiante.IdEstudiante %}
+                                ({{ penalizacion.Estado }})
+                                {% endif %}
+                                {% endfor %}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_fecha_prestamo">Fecha de préstamo:</label>
+                        <input type="date" id="id_fecha_prestamo" name="fecha_prestamo" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_fecha_devolucion">Fecha de devolución:</label>
+                        <input type="date" id="id_fecha_devolucion" name="fecha_devolucion" class="form-control">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Enviar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

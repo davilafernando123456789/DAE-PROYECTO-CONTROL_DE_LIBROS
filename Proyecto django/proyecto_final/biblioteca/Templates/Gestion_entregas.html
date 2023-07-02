@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}{% endblock %}
+
+{% block body %}
+
+<div class="container">
+    <div class="row">   
+        <div class="col-sm-12 col-md-6 col-lg-8 col-xl-8">
+            <form class="d-flex" role="search" action="" method="GET">
+                <input class="form-control me-2" type="search" placeholder="Buscar por nombre de estudiante" aria-label="Search" name="nombre_estudiante">
+                <button class="btn btn-outline-success" type="submit">Buscar</button>
+            </form>
+        <h2>Listado de Devoluciones</h2>
+        <table id="tabla-devoluciones" class="table table-dark table-sm">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Estudiante</th>
+                    <th>Libro</th>
+                    <th>Inicio Prestamo</th>
+                    <th>Fin Prestamo</th>
+                    <th>Fecha de Entrega</th>
+                    <th>Estado</th>
+                    <th colspan="2">Opciones de Manejo</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for devolucion in devoluciones %}
+                    <tr onclick="cargarDatosDevolucion(event)" style="cursor: pointer;">
+                        <td>{{ devolucion.IdDevolucion }}</td>
+                        <td>{{ devolucion.IdPrestamo.IdEstudiante.Nombre }}</td>
+                        <td>{{ devolucion.IdPrestamo.IdLibro.Titulo }}</td>
+                        <td>{{ devolucion.IdPrestamo.FechaPrestamo }}</td>
+                        <td>{{ devolucion.IdPrestamo.FechaDevolucion }}</td>
+                        <td>{{ devolucion.Fecha_entrega }}</td>
+                        <td>{{ devolucion.Estado }}</td>
+                        <td><a href="/editar_entrega/{{ devolucion.IdDevolucion }}" class="btn btn-info">Editar</a></td>
+                        <td><a href="eliminarentrega/{{ devolucion.IdDevolucion }}" class="btn btn-danger">Eliminar</a></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    </div>
+</div>
+{% endblock %}

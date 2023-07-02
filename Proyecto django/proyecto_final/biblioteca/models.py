@@ -1,5 +1,5 @@
 from django.db import models
-
+from datetime import datetime, timedelta
 # Create your models here.
 class Categoria(models.Model):
     Idcategoria = models.AutoField(primary_key=True)
@@ -81,6 +81,17 @@ class Penalizacion(models.Model):
         return f"Penalizacion {self.IdPenalizacion}"
 
 
+    @property
+    def calcular_estado(self):
+        fecha_actual = datetime.now().date()
+
+        if fecha_actual > self.Fecha_final:
+            self.Estado = 'Moroso'
+        else:
+            self.Estado = 'Apto'
+
+        return self.Estado
+    
 class Estudiante(models.Model):
     IdEstudiante = models.AutoField(primary_key=True)
     Nombre = models.CharField(max_length=100)

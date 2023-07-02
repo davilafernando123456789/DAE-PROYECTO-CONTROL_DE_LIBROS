@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Agregar Penalización</h2>
+  <form method="post" action="/agregar_penalizacion">
+    <label for="id_estudiante">Estudiante:</label>
+    <select id="id_estudiante" name="estudiante">
+      {% for estudiante in estudiantes %}
+        <option value="{{ estudiante.IdEstudiante }}">{{ estudiante.Nombre }}</option>
+      {% endfor %}
+    </select>
+    <br>
+    <label for="id_fecha_inicio">Fecha de Inicio:</label>
+    <input type="date" id="id_fecha_inicio" name="Falseecha_inicio">
+    <br>
+    <label for="id_fecha_final">Fecha Final:</label>
+    <input type="date" id="id_fecha_final" name="fecha_final">
+    <br>
+    <label for="id_estado">Estado:</label>
+    <input type="text" id="id_estado" name="estado">
+    <br>
+    <button type="submit">Guardar</button>
+  </form>
+  
+  <h2>Listado de Penalizaciones</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Estudiante</th>
+        <th>Fecha de Inicio</th>
+        <th>Fecha Final</th>
+        <th>Estado</th>
+        <th>Opciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for penalizacion in penalizaciones %}
+        <tr>
+          <td>{{ penalizacion.IdPenalizacion }}</td>
+          <td>{{ penalizacion.IdEstudiante }}</td>
+          <td>{{ penalizacion.Falseecha_inicio }}</td>
+          <td>{{ penalizacion.Fecha_final }}</td>
+          <td>{{ penalizacion.Estado }}</td>
+          <td><!-- Opciones de manejo aquí --></td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
