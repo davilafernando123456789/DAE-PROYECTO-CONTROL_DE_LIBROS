@@ -1,6 +1,35 @@
 {% extends 'base.html' %}
-
+{% block title %}Registro prestamos{% endblock %}
 {% block body %}
+<head>
+    <style>
+        .select2-results__option {
+            background-color: #ffffff;
+        }
+
+        .select2-container--bootstrap4 .select2-results__option[aria-selected=true] {
+            background-color:  #ffffff;
+        }
+
+        .select2-container--bootstrap4 .select2-results__option--highlighted[aria-selected] {
+            background-color:  #ffffff;
+        }
+        .select2-container--bootstrap4 .select2-dropdown {
+            background-color: #ffffff;
+        }
+        .select2-container--bootstrap4 .select2-selection__choice__remove {
+            display: none;
+        }
+        
+        .select2-container--bootstrap4 .select2-selection__choice {
+            background-color: #ffffff;
+            border: none;
+            color: #333;
+            padding: 5px;
+            margin-right: 5px;
+        }
+    </style>
+</head>
 <div class="row">
     <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
         <h2>Ingreso de Préstamo</h2>
@@ -11,7 +40,7 @@
 
                     <div class="form-group">
                         <label for="id_encargado">Encargado:</label>
-                        <select id="id_encargado" name="encargado" class="form-control">
+                        <select id="id_encargado" name="encargado" class="form-control" readonly>
                             {% for encargado in encargados %}
                             <option value="{{ encargado.IdEncargado }}">{{ encargado.Nombre }}</option>
                             {% endfor %}
@@ -20,28 +49,36 @@
 
                     <div class="form-group">
                         <label for="id_libro">Libro:</label>
-                        <select id="id_libro" name="libro" class="form-control">
-                            {% for libro in libros %}
-                            <option value="{{ libro.IdLibro }}">{{ libro.Titulo }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="id_estudiante">Estudiante:</label>
-                        <select id="id_estudiante" name="estudiante" class="form-control">
-                            {% for estudiante in estudiantes %}
-                            <option value="{{ estudiante.IdEstudiante }}">
-                                {{ estudiante.IdEstudiante }} - {{ estudiante.Nombre }}
-                                {% for penalizacion in penalizaciones %}
-                                {% if penalizacion.IdEstudiante_id == estudiante.IdEstudiante %}
-                                ({{ penalizacion.Estado }})
+                        <div class="d-flex">
+                            <select id="id_libro" name="libro" class="form-control select2 mr-2">
+                                {% for libro in libros %}
+                                {% if libro.Disponibilidad == True %}
+                                <option value="{{ libro.IdLibro }}">{{ libro.Titulo }}</option>
                                 {% endif %}
                                 {% endfor %}
-                            </option>
-                            {% endfor %}
-                        </select>
+                            </select>
+                        </div>
                     </div>
+                    
+                    
+                    <div class="form-group">
+                        <label for="id_estudiante">Estudiante:</label>
+                        <div class="d-flex">
+                            <select id="id_estudiante" name="estudiante" class="form-control select2 mr-2">
+                                {% for estudiante in estudiantes %}
+                                <option value="{{ estudiante.IdEstudiante }}">
+                                    {{ estudiante.Nombre }}
+                                    {% for penalizacion in penalizaciones %}
+                                    {% if penalizacion.IdEstudiante_id == estudiante.IdEstudiante %}
+                                    ({{ penalizacion.Estado }})
+                                    {% endif %}
+                                    {% endfor %}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    
 
                     <div class="form-group">
                         <label for="id_fecha_prestamo">Fecha de préstamo:</label>
@@ -59,4 +96,34 @@
         </div>
     </div>
 </div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        // Inicializar los campos select2
+        $('.select2').select2({
+            theme: 'bootstrap4',
+            placeholder: 'Buscar...',
+            allowClear: true,
+            tags: true
+        });
+
+        // Agregar estilos personalizados al contenedor
+        $('.select2-container').addClass('bg-light');
+
+        // Agregar color de fondo a la lista desplegable
+        $('.select2-dropdown').addClass('bg-light');
+
+        // Agregar color de fondo a los elementos de la lista
+        $('.select2-results__option').addClass('bg-light');
+    });
+</script>
+
+
+
+
+
 {% endblock %}

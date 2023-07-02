@@ -1,16 +1,17 @@
 {% extends './base.html' %}
 
-{% block title %}Gestion de Cursos{% endblock %}
+{% block title %}Gestion de prestamos{% endblock %}
 
 {% block body %}
 <div class="container">
     <div class="row">   
 
         <form class="d-flex" role="search" action="" method="GET">
-            <input class="form-control me-2" type="search" placeholder="Buscar por nombre de estudiante o título de libro" aria-label="Search" name="query">
+            <input class="form-control me-2" type="search" placeholder="Buscar por nombre de estudiante o título de libro" aria-label="Search" name="query" id="search-input">
             <button class="btn btn-outline-success" type="submit">Buscar</button>
         </form>
-        
+        <div class="container">
+        <div class="row">   
         <h2>Listado de Préstamos</h2>
         <table class="table table-dark table-sm">
             <thead>
@@ -39,6 +40,26 @@
                 {% endfor %}
             </tbody>
         </table>
+        </div>
     </div>
 </div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('#search-input').on('input', function() {
+                var query = $(this).val().toLowerCase();
+                $('.table tbody tr').hide();
+
+                $('.table tbody tr').each(function() {
+                    var estudiante = $(this).find('td:eq(3)').text().toLowerCase();
+                    var tituloLibro = $(this).find('td:eq(2)').text().toLowerCase();
+
+                    if (estudiante.includes(query) || tituloLibro.includes(query)) {
+                        $(this).show();
+                    }
+                });
+            });
+        });
+    </script>
 {% endblock %}

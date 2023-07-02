@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
-
-{% block title %}{% endblock %}
+{% block title %}Gestión de entregas{% endblock %}
 
 {% block body %}
 
@@ -8,7 +7,7 @@
     <div class="row">   
         <div class="col-sm-12 col-md-6 col-lg-8 col-xl-8">
             <form class="d-flex" role="search" action="" method="GET">
-                <input class="form-control me-2" type="search" placeholder="Buscar por nombre de estudiante" aria-label="Search" name="nombre_estudiante">
+                <input class="form-control me-2" type="search" placeholder="Buscar por nombre de estudiante" aria-label="Search" name="nombre_estudiante" id="search-input">
                 <button class="btn btn-outline-success" type="submit">Buscar</button>
             </form>
         <h2>Listado de Devoluciones</h2>
@@ -44,4 +43,25 @@
     </div>
     </div>
 </div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $('#search-input').on('input', function() {
+            var query = $(this).val().toLowerCase();
+            $('#tabla-devoluciones tbody tr').hide();
+
+            $('#tabla-devoluciones tbody tr').each(function() {
+                var estudiante = $(this).find('td:eq(1)').text().toLowerCase();
+                var libro = $(this).find('td:eq(2)').text().toLowerCase();
+
+                if (estudiante.includes(query) || libro.includes(query)) {
+                    $(this).show();
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}

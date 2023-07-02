@@ -5,6 +5,7 @@ from datetime import timedelta
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Prestamo,Libro,Estudiante,Encargado, Penalizacion, Devolucion
 from django.db.models import Q
+from django.http import JsonResponse
 
 # Create your views de inicio de sesion.
 def login_view(request):
@@ -67,7 +68,6 @@ def listarEntrega(request):
         'penalizaciones': penalizaciones,
         'devoluciones': devoluciones,
     }
-
     return render(request, 'Gestion_entregas.html', context)
 
 def listar_editar_penalizacion(request):
@@ -142,6 +142,14 @@ def prestamo_form(request):
         prestamo = Prestamo.objects.create(IdEncargado=encargado, IdLibro=libro, IdEstudiante=estudiante,
                                            FechaPrestamo=FechaPrestamo, FechaDevolucion=FechaDevolucion)
 
+        # Obtener la fecha actual
+
+        # Calcular la fecha de entrega
+        fecha_entrega = FechaDevolucion # Asumiendo una devolución después de 7 días
+
+        # Crear el registro de devolución
+        devolucion = Devolucion.objects.create(IdPrestamo=prestamo, Fecha_entrega=fecha_entrega, Estado="No entregado")
+
         return redirect('/home')
 
     prestamos = Prestamo.objects.all()
@@ -175,17 +183,6 @@ def listarPrestamos(request):
     libros = Libro.objects.all()
     estudiantes = Estudiante.objects.all()
     penalizaciones = Penalizacion.objects.all()
-
-    # Obtener el parámetro de búsqueda si está presente en la solicitud GET
-    query = request.GET.get('query')
-
-    # Filtrar los préstamos por nombre de estudiante o título de libro si se proporciona el parámetro de búsqueda
-    if query:
-        prestamos = prestamos.filter(
-            Q(IdEstudiante__Nombre__icontains=query) | Q(IdLibro__Titulo__icontains=query)
-        )
-    else:
-        prestamos = prestamos.all()
 
     context = {
         'prestamos': prestamos,
@@ -237,6 +234,15 @@ def registrar_entrega(request):
     return render(request, 'Gestion_entregas.html', context)
 
 
+def buscar_libros(request):
+    query = request.GET.get('query', '')
+    libros = Libro.objects.filter(titulo__icontains=query).values('titulo')
+    return JsonResponse({'libros': list(libros)})
+
+def buscar_estudiantes(request):
+    query = request.GET.get('query', '')
+    estudiantes = Estudiante.objects.filter(nombre__icontains=query).values('nombre')
+    return JsonResponse({'estudiantes': list(estudiantes)})
     
 def editar_penalizacion(request, id_penalizacion):
     penalizacion = get_object_or_404(Penalizacion, IdPenalizacion=id_penalizacion)
@@ -340,3 +346,10 @@ def editar_entrega(request, IdDevolucion):
     }
     return render(request, 'Editar_entrega.html', context)
 
+
+def listar_libros(request):
+    libros = Libro.objects.all()
+    context = {
+        'libros': libros
+    }
+    return render(request, 'listar_libros.html', context)

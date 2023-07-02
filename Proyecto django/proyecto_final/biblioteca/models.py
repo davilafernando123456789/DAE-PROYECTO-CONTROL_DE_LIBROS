@@ -48,6 +48,7 @@ class Libro(models.Model):
         return self.Titulo
 
 
+
 class Prestamo(models.Model):
     IdPrestamo = models.AutoField(primary_key=True)
     IdEncargado = models.ForeignKey('Encargado', on_delete=models.CASCADE)
