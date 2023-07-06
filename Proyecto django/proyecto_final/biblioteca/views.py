@@ -28,15 +28,21 @@ def login_view(request):
     
     return render(request, 'login.html')
 
-
 def prestamos_vencidos(request):
-    prestamos = Prestamo.objects.filter(FechaDevolucion__lt=datetime.now().date())
+    prestamos = Prestamo.objects.filter(devolucion__Estado='No entregado')
+    encargados = Encargado.objects.all()
     libros = Libro.objects.all()
     estudiantes = Estudiante.objects.all()
-    context = {'prestamos': prestamos,
-                'libros': libros,
-                'estudiantes': estudiantes,
-               }
+    penalizaciones = Penalizacion.objects.all()
+
+    context = {
+        'prestamos': prestamos,
+        'encargados': encargados,
+        'libros': libros,
+        'estudiantes': estudiantes,
+        'penalizaciones': penalizaciones,
+    }
+
     return render(request, 'prestamos_vencidos.html', context)
 
 def home(request):
