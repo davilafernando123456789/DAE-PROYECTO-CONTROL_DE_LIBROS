@@ -213,7 +213,53 @@ def listarPrestamos(request):
 
     return render(request, 'Gestion_prestamo.html', context)
 
+from django.db.models import Q
+from datetime import datetime, timedelta
+
+from django.db.models import Q
+from datetime import datetime, timedelta
+
+def lista_prestamos(request):
+    prestamos = Prestamo.objects.all()
+    encargados = Encargado.objects.all()
+    libros = Libro.objects.all()
+    estudiantes = Estudiante.objects.all()
+    penalizaciones = Penalizacion.objects.all()
+
+    # Obtener parámetros de búsqueda (si están presentes)
+    tipo_consulta = request.GET.get('tipo_consulta')
+    fecha = request.GET.get('fecha')
+
+    # Realizar el filtrado de acuerdo a los parámetros de búsqueda
+    if tipo_consulta == 'dia':
+        fecha_actual = datetime.now().date()
+        prestamos = prestamos.filter(FechaPrestamo=fecha_actual)
+    elif tipo_consulta == 'semana':
+        fecha_actual = datetime.now().date()
+        fecha_inicio = fecha_actual - timedelta(days=7)
+        prestamos = prestamos.filter(FechaPrestamo__gte=fecha_inicio, FechaPrestamo__lte=fecha_actual)
+    elif tipo_consulta == 'mes':
+        fecha_actual = datetime.now().date()
+        fecha_inicio = fecha_actual - timedelta(days=30)
+        prestamos = prestamos.filter(FechaPrestamo__gte=fecha_inicio, FechaPrestamo__lte=fecha_actual)
+    elif tipo_consulta == 'personalizado' and fecha:
+        fecha_seleccionada = datetime.strptime(fecha, '%Y-%m-%d').date()
+        prestamos = prestamos.filter(FechaPrestamo=fecha_seleccionada)
+
+    context = {
+        'prestamos': prestamos,
+        'encargados': encargados,
+        'libros': libros,
+        'estudiantes': estudiantes,
+        'penalizaciones': penalizaciones,
+    }
+
+    return render(request, 'Consultar_prestamos.html', context)
+
+
+
     
+
 
 
 def registrar_entrega(request):

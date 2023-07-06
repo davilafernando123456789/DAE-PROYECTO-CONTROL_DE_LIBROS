@@ -1,0 +1,69 @@
+{% extends './base.html' %}
+
+{% block title %}Consultar Préstamos{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h2>Listado de Préstamos</h2>
+    <form method="GET" action="{% url 'lista_prestamos' %}">
+        <div class="form-group">
+            <label for="tipo_consulta">Tipo de consulta:</label>
+            <select id="tipo_consulta" name="tipo_consulta" class="form-control">
+                <option value="">Seleccione un tipo de consulta</option>
+                <option value="dia">Préstamos del día</option>
+                <option value="semana">Préstamos de la última semana</option>
+                <option value="mes">Préstamos del último mes</option>
+                <option value="personalizado">Consulta personalizada</option>
+            </select>
+        </div>
+        <div id="fecha_campos" class="form-group" style="display: none;">
+            <label for="fecha">Fecha:</label>
+            <input type="date" id="fecha" name="fecha" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary">Realizar consulta</button>
+    </form>
+
+    <table class="table table-dark table-sm">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Encargado</th>
+                <th>Libro</th>
+                <th>Estudiante</th>
+                <th>Fecha de Préstamo</th>
+                <th>Fecha de Devolución</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for prestamo in prestamos %}
+                <tr>
+                    <td>{{ prestamo.IdPrestamo }}</td>
+                    <td>{{ prestamo.IdEncargado.Nombre }}</td>
+                    <td>{{ prestamo.IdLibro.Titulo }}</td>
+                    <td>{{ prestamo.IdEstudiante.Nombre }}</td>
+                    <td>{{ prestamo.FechaPrestamo }}</td>
+                    <td>{{ prestamo.FechaDevolucion }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6">No se encontraron préstamos.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    var tipoConsultaSelect = document.getElementById('tipo_consulta');
+    var fechaCampos = document.getElementById('fecha_campos');
+    var fechaInput = document.getElementById('fecha');
+
+    tipoConsultaSelect.addEventListener('change', function() {
+        if (this.value === 'personalizado') {
+            fechaCampos.style.display = 'block';
+        } else {
+            fechaCampos.style.display = 'none';
+        }
+    });
+</script>
+{% endblock %}
