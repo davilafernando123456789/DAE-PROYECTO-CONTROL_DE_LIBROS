@@ -6,6 +6,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Prestamo,Libro,Estudiante,Encargado, Penalizacion, Devolucion
 from django.db.models import Q
 from django.http import JsonResponse
+import requests
 
 # Create your views de inicio de sesion.
 def login_view(request):
@@ -357,3 +358,12 @@ def listar_libros(request):
         'libros': libros
     }
     return render(request, 'listar_libros.html', context)
+
+#lista de estudiantes mediante API
+def Listar_estudiantes(request):
+    api_url = "http://127.0.0.1:8010/estudiantes/"
+    response = requests.get(api_url)
+    if response.status_code == 200:
+        data = response.json()
+        return render(request, 'Lista_Estudiantes.html', {'posts': data})
+    return render(request, 'error.html', {'message': 'Error al obtener los datos de la API'})
