@@ -1,0 +1,44 @@
+<!-- api_data.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Data</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tabla estudiantes</h1>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>DNI</th>
+            <th>Direccion</th>
+            <th>Telefono</th>
+            <th>Correo</th>
+        </tr>
+        {% for post in posts %}
+            <tr>
+                <td>{{ post.IdEstudiante }}</td>
+                <td>{{ post.Nombre }}</td>
+                <td>{{ post.Apellido }}</td>
+                <td>{{ post.DNI }}</td>
+                <td>{{ post.Direccion }}</td>
+                <td>{{ post.Telefono }}</td>
+                <td>{{ post.Correo }}</td>
+                
+            </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

@@ -19,7 +19,6 @@ urlpatterns=[
       # otras rutas de tu aplicación
     path('buscar_libros/', views.buscar_libros, name='buscar_libros'),
     path('buscar_estudiantes/', views.buscar_estudiantes, name='buscar_estudiantes'),
-    
-
-    
+    # listar estudiantes mediante API   
+    path('listar_estudiantes/', views.Listar_estudiantes, name='listar_estudiantes'),
 ]
