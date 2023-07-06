@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Lista de devoluciones{% endblock %}
+
+{% block body %}
+<body>
+    <h1>Prestamos Vencidos</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Codigo</th>
+                <th>Libro</th>
+                <th>Estudiante</th>
+                <th>Fecha de Préstamo</th>
+                <th>Fecha de Devolución</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for prestamo in prestamos %}
+            <tr>
+                <td>{{ prestamo.IdPrestamo }}</td>
+                <td>{{ prestamo.IdLibro.Titulo }}</td>
+                <td>{{ prestamo.IdEstudiante.Nombre }}</td>
+                <td>{{ prestamo.FechaPrestamo }}</td>
+                <td>{{ prestamo.FechaDevolucion }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+{% endblock %}

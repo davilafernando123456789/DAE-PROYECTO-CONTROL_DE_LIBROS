@@ -20,7 +20,7 @@
                     <th>Código</th>
                     <th>Título</th>
                     <th>Autor</th>
-                    <th>Disponibilidad</th>
+                    <th>Disponibles</th>
                 </tr>
             </thead>
             <tbody>
@@ -29,13 +29,7 @@
                     <td>{{ libro.IdLibro }}</td>
                     <td>{{ libro.Titulo }}</td>
                     <td>{{ libro.Autor }}</td>
-                    <td>
-                        {% if libro.Disponibilidad %}
-                            Disponible
-                        {% else %}
-                            No disponible
-                        {% endif %}
-                    </td>
+                    <td>{{ libro.Cantidad }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

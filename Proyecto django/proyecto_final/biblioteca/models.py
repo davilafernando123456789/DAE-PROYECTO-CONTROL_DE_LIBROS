@@ -42,7 +42,7 @@ class Libro(models.Model):
     Editorial = models.ForeignKey(Editorial, on_delete=models.CASCADE)
     Categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
     Año_publicacion = models.PositiveIntegerField()
-    Disponibilidad = models.BooleanField(default=True)
+    Cantidad = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.Titulo

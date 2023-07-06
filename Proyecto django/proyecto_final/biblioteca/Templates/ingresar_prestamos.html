@@ -52,9 +52,9 @@
                         <div class="d-flex">
                             <select id="id_libro" name="libro" class="form-control select2 mr-2">
                                 {% for libro in libros %}
-                                {% if libro.Disponibilidad == True %}
-                                <option value="{{ libro.IdLibro }}">{{ libro.Titulo }}</option>
-                                {% endif %}
+                                    {% if libro.Cantidad > 0 %}
+                                        <option value="{{ libro.IdLibro }}">{{ libro.Titulo }}</option>
+                                    {% endif %}
                                 {% endfor %}
                             </select>
                         </div>

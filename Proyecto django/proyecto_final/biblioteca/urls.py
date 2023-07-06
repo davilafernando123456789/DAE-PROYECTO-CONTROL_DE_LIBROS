@@ -14,11 +14,13 @@ urlpatterns=[
     path('eliminarentrega/<IdDevolucion>',views.eliminarentrega),
     path('editar_entrega/<IdDevolucion>', views.editar_entrega),
     path('penalizaciones/', views.listar_editar_penalizacion, name='listar_editar_penalizacion'),
+    path('penalizar/', views.listar_penalizacion, name='listar_penalizacion'),
     path('editar_penalizacion/<int:id_penalizacion>/', views.editar_penalizacion, name='editar_penalizacion'),
     path('eliminarpenalizacion/<IdPenalizacion>',views.eliminarpenalizacion),
       # otras rutas de tu aplicación
     path('buscar_libros/', views.buscar_libros, name='buscar_libros'),
     path('buscar_estudiantes/', views.buscar_estudiantes, name='buscar_estudiantes'),
+    path('prestamos_vencidos/', views.prestamos_vencidos, name='prestamos_vencidos'),
     
 
     

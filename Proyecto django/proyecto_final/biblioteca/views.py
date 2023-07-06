@@ -27,7 +27,17 @@ def login_view(request):
     
     return render(request, 'login.html')
 
-                  
+
+def prestamos_vencidos(request):
+    prestamos = Prestamo.objects.filter(FechaDevolucion__lt=datetime.now().date())
+    libros = Libro.objects.all()
+    estudiantes = Estudiante.objects.all()
+    context = {'prestamos': prestamos,
+                'libros': libros,
+                'estudiantes': estudiantes,
+               }
+    return render(request, 'prestamos_vencidos.html', context)
+
 def home(request):
     prestamos = Prestamo.objects.all()
     encargados = Encargado.objects.all()
@@ -72,7 +82,7 @@ def listarEntrega(request):
 
 def listar_editar_penalizacion(request):
     penalizaciones = Penalizacion.objects.all()
-
+    estudiantes = Estudiante.objects.all()
     if request.method == 'POST':
         penalizacion_id = request.POST.get('penalizacion_id')
         fecha_inicio = request.POST.get('fecha_inicio')
@@ -88,17 +98,26 @@ def listar_editar_penalizacion(request):
         return redirect('listar_editar_penalizacion')
 
     context = {
+        'estudiantes': estudiantes,
         'penalizaciones': penalizaciones,
     }
     return render(request, 'listar_editar_penalizacion.html', context)
+def listar_penalizacion(request):
+    penalizaciones = Penalizacion.objects.all()
+    estudiantes = Estudiante.objects.all()
 
+    context = {
+        'estudiantes': estudiantes,
+        'penalizaciones': penalizaciones,
+    }
+    return render(request, 'Penalizaciones_activas.html', context)
 
 from datetime import datetime
 
 from datetime import datetime
-def insertar_estudiante_en_penalizacion(Id_Prestamo):
-    prestamo = Prestamo.objects.get(IdPrestamo=Id_Prestamo)
-    devolucion = Devolucion.objects.get(IdPrestamo=prestamo)
+def insertar_estudiante_en_penalizacion(IdPrestamo):
+    prestamo = Prestamo.objects.get(IdPrestamo=IdPrestamo)
+    devolucion = Devolucion.objects.get(IdPrestamo=IdPrestamo)
     
     # Obtener el objeto Estudiante a través de la relación con Prestamo
     estudiante = prestamo.IdEstudiante
@@ -118,7 +137,6 @@ def insertar_estudiante_en_penalizacion(Id_Prestamo):
         penalizacion.Falseecha_inicio = prestamo.FechaDevolucion
         penalizacion.Fecha_final = fecha_final_penalizacion
         penalizacion.Estado = "moroso"
-        penalizacion.Falseecha_inicio = datetime.now()  # Asignar un valor a Falseecha_inicio
 
         # Guardar el objeto Penalizacion en la base de datos
         penalizacion.save()
@@ -194,23 +212,7 @@ def listarPrestamos(request):
 
     return render(request, 'Gestion_prestamo.html', context)
 
-       #try:
-            # Obtener el objeto Penalizacion asociado al estudiante
-          #  penalizacion = Penalizacion.objects.get(IdEstudiante=Id_Estudiante)
-
-            # Verificar si hay una fecha de inicio y una fecha de fin en la penalización
-           # if penalizacion.Falseecha_inicio  and penalizacion.Fecha_final:
-           #     penalizacion.calcular_estado()
-           # else:
-                # Si no hay fecha de inicio ni de fin, el estado es "apto"
-            #    penalizacion.Estado = "apto"
-
-            # Guardar los cambios en la base de datos
-           # penalizacion.save()
-
-       # except Penalizacion.DoesNotExist:
-            # El estudiante no se encuentra en la tabla Penalizacion, no se realiza ninguna acción adicional
-         #   pass
+    
 
 
 def registrar_entrega(request):
@@ -232,6 +234,8 @@ def registrar_entrega(request):
         'prestamos': prestamos,
     }
     return render(request, 'Gestion_entregas.html', context)
+
+
 
 
 def buscar_libros(request):

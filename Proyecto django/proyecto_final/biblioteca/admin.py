@@ -20,7 +20,7 @@ class EstudianteAdmin(admin.ModelAdmin):
     list_display = ('IdEstudiante', 'Nombre', 'Apellido', 'DNI', 'Direccion', 'Telefono', 'Correo')
 
 class LibroAdmin(admin.ModelAdmin):
-    list_display = ('IdLibro', 'Titulo', 'ISBN', 'Autor', 'Editorial', 'Categoria', 'Año_publicacion', 'Disponibilidad')
+    list_display = ('IdLibro', 'Titulo', 'ISBN', 'Autor', 'Editorial', 'Categoria', 'Año_publicacion', 'Cantidad')
 
 class PrestamoAdmin(admin.ModelAdmin):
     list_display = ('IdPrestamo', 'IdEncargado', 'IdLibro', 'IdEstudiante', 'FechaPrestamo', 'FechaDevolucion')
