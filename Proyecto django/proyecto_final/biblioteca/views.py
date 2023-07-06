@@ -120,8 +120,7 @@ def listar_penalizacion(request):
     return render(request, 'Penalizaciones_activas.html', context)
 
 
-
-from django.shortcuts import get_object_or_404
+import requests
 
 def prestamo_form(request):
     # Obtener el parámetro de búsqueda si está presente en la solicitud GET
@@ -134,11 +133,27 @@ def prestamo_form(request):
         FechaPrestamo = request.POST["fecha_prestamo"]
         FechaDevolucion = request.POST["fecha_devolucion"]
 
-        encargado = get_object_or_404(Encargado, IdEncargado=Id_Encargado)
-        libro = get_object_or_404(Libro, IdLibro=Id_Libro)
-        estudiante = get_object_or_404(Estudiante, IdEstudiante=Id_Estudiante)
-
+        encargado = Encargado.objects.get(IdEncargado=Id_Encargado)
+        libro = Libro.objects.get(IdLibro=Id_Libro)
         actualizar_penalizacion(request)
+
+        # Obtener los datos del estudiante de la API
+        url = 'http://127.0.0.1:8080/estudiantes/' + Id_Estudiante
+        response = requests.get(url)
+        estudiante_data = response.json()
+
+        # Crear o actualizar el registro del estudiante
+        estudiante, created = Estudiante.objects.update_or_create(
+            IdEstudiante=Id_Estudiante,
+            defaults={
+                'Nombre': estudiante_data['Nombre'],
+                'Apellido': estudiante_data['Apellido'],
+                'DNI': estudiante_data['DNI'],
+                'Direccion': estudiante_data['Direccion'],
+                'Telefono': estudiante_data['Telefono'],
+                'Correo': estudiante_data['Correo']
+            }
+        )
 
         prestamo = Prestamo.objects.create(IdEncargado=encargado, IdLibro=libro, IdEstudiante=estudiante,
                                            FechaPrestamo=FechaPrestamo, FechaDevolucion=FechaDevolucion)
@@ -147,7 +162,6 @@ def prestamo_form(request):
         libro.save()
 
         devolucion = Devolucion.objects.create(IdPrestamo=prestamo, Fecha_entrega=None, Estado="No entregado")
-        devolucion.save()
 
         # Llamar a la función insertar_estudiante_en_penalizacion pasando el ID del estudiante
         return redirect('/home')
@@ -164,13 +178,15 @@ def prestamo_form(request):
     encargados = Encargado.objects.all()
     libros = Libro.objects.all()
     penalizaciones = Penalizacion.objects.all()
-    estudiantes = Estudiante.objects.all()
+
+    url = 'http://127.0.0.1:8080/estudiantes/'
+    response = requests.get(url)
+    estudiantes = response.json()
 
     context = {'prestamo': prestamo, 'encargados': encargados, 'libros': libros, 'estudiantes': estudiantes,
                 'penalizaciones': penalizaciones}
 
     return render(request, 'Gestion_prestamo.html', context)
-
 
 
 def listarPrestamos(request):
@@ -323,7 +339,10 @@ def insertar_prestamo(request):
     encargados = Encargado.objects.all()
     libros = Libro.objects.all()
     penalizaciones = Penalizacion.objects.all()
-    estudiantes = Estudiante.objects.all()
+
+    url = 'http://127.0.0.1:8080/estudiantes/' 
+    response = requests.get(url)
+    estudiantes = response.json()
 
     context = {'prestamo': prestamo,'encargados': encargados,'libros': libros,'estudiantes': estudiantes,'penalizaciones': penalizaciones,}
 
