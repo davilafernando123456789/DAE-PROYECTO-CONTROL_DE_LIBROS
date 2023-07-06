@@ -1,65 +1,62 @@
-{% extends './base.html' %}
-
-{% block title %}Gestion de prestamos{% endblock %}
+{% extends './base2.html' %}
 
 {% block body %}
-<div class="container">
-    <div class="row">   
 
-        <form class="d-flex" role="search" action="" method="GET">
-            <input class="form-control me-2" type="search" placeholder="Buscar por nombre de estudiante o título de libro" aria-label="Search" name="query" id="search-input">
-            <button class="btn btn-outline-success" type="submit">Buscar</button>
-        </form>
+<div class="container">
+    <div class="row">
+        <form class="d-flex" role="search" action="" method="GET"></form>
         <div class="container">
-        <div class="row">   
-        <h2>Listado de Préstamos</h2>
-        <table class="table table-dark table-sm">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Encargado</th>
-                    <th>Libro</th>
-                    <th>Estudiante</th>
-                    <th>Fecha de Préstamo</th>
-                    <th>Fecha de Devolución</th>
-                    <th colspan="2">Opciones de Manejo</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for p in prestamos %}
-                <tr onclick="cargarDatosPrestamos(event)" style="cursor: pointer;">
-                    <td>{{ p.IdPrestamo }}</td>
-                    <td>{{ p.IdEncargado.Nombre }}</td>
-                    <td>{{ p.IdLibro.Titulo }}</td>
-                    <td>{{ p.IdEstudiante.Nombre }}</td>
-                    <td>{{ p.FechaPrestamo }}</td>
-                    <td>{{ p.FechaDevolucion }}</td>
-                    <td><a href="editar_prestamo/{{p.IdPrestamo}}" class="btn btn-info">Editar</a></td>
-                    <td><a href="eliminarprestamo/{{p.IdPrestamo}}" class="btn btn-danger">Eliminar</a></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+            <div class="row">
+                
+        
+                <table class="table table-primary  table-sm">
+                    <thead>
+                        <tr>
+                            <th>Codigo</th>
+                            <th>Encargado</th>
+                            <th>Libro</th>
+                            <th>Estudiante</th>
+                            <th>Fecha de Préstamo</th>
+                            <th>Fecha de Devolución</th>
+                            <th colspan="2">Opciones de Manejo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in prestamos %}
+                        <tr onclick="cargarDatosPrestamos(event)" style="cursor: pointer;">
+                            <td>{{ p.IdPrestamo }}</td>
+                            <td>{{ p.IdEncargado.Nombre }}</td>
+                            <td>{{ p.IdLibro.Titulo }}</td>
+                            <td>{{ p.IdEstudiante.Nombre }}</td>
+                            <td>{{ p.FechaPrestamo }}</td>
+                            <td>{{ p.FechaDevolucion }}</td>
+                            <td><a href="editar_prestamo/{{p.IdPrestamo}}" class="btn btn-info">Editar</a></td>
+                            <td><a href="eliminarprestamo/{{p.IdPrestamo}}" class="btn btn-danger">Eliminar</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-    <script>
-        $(document).ready(function() {
-            $('#search-input').on('input', function() {
-                var query = $(this).val().toLowerCase();
-                $('.table tbody tr').hide();
+<script>
+    $(document).ready(function() {
+        $('#search-input').on('input', function() {
+            var query = $(this).val().toLowerCase();
+            $('.table tbody tr').hide();
 
-                $('.table tbody tr').each(function() {
-                    var estudiante = $(this).find('td:eq(3)').text().toLowerCase();
-                    var tituloLibro = $(this).find('td:eq(2)').text().toLowerCase();
+            $('.table tbody tr').each(function() {
+                var estudiante = $(this).find('td:eq(3)').text().toLowerCase();
+                var tituloLibro = $(this).find('td:eq(2)').text().toLowerCase();
 
-                    if (estudiante.includes(query) || tituloLibro.includes(query)) {
-                        $(this).show();
-                    }
-                });
+                if (estudiante.includes(query) || tituloLibro.includes(query)) {
+                    $(this).show();
+                }
             });
         });
-    </script>
+    });
+</script>
 {% endblock %}

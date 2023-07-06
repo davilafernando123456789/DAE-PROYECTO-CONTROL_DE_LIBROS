@@ -8,13 +8,13 @@ class CategoriaAdmin(admin.ModelAdmin):
     list_display = ('Idcategoria', 'Nombre')
 
 class CredencialesAdmin(admin.ModelAdmin):
-    list_display = ('IdCredenciales', 'Usuario', 'Contraseña')
+    list_display = ('IdCredenciales', 'Usuario', 'Contraseña','IdEncargado')
 
 class EditorialAdmin(admin.ModelAdmin):
     list_display = ('idEditorial', 'Nombre', 'Telefono', 'Correo', 'Pais', 'Ciudad', 'Direccion')
 
 class EncargadoAdmin(admin.ModelAdmin):
-    list_display = ('IdEncargado', 'Nombre', 'Apellido', 'Direccion', 'Telefono', 'Correo', 'IdCredenciales')
+    list_display = ('IdEncargado', 'Nombre', 'Apellido', 'Direccion', 'Telefono', 'Correo')
 
 class EstudianteAdmin(admin.ModelAdmin):
     list_display = ('IdEstudiante', 'Nombre', 'Apellido', 'DNI', 'Direccion', 'Telefono', 'Correo')
@@ -29,7 +29,7 @@ class DevolucionAdmin(admin.ModelAdmin):
     list_display = ('IdDevolucion', 'IdPrestamo', 'Fecha_entrega', 'Estado')
 
 class PenalizacionAdmin(admin.ModelAdmin):
-    list_display = ('IdPenalizacion', 'IdEstudiante', 'Falseecha_inicio', 'Fecha_final', 'Estado')
+    list_display = ('IdPenalizacion', 'IdEstudiante','Estado')
 
 admin.site.register(Autor, AutorAdmin)
 admin.site.register(Categoria, CategoriaAdmin)

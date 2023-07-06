@@ -3,46 +3,42 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from datetime import timedelta
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Prestamo,Libro,Estudiante,Encargado, Penalizacion, Devolucion
+from .models import Prestamo,Libro,Estudiante,Encargado, Penalizacion, Devolucion, Credenciales
 from django.db.models import Q
 from django.http import JsonResponse
 import requests
-
-# Create your views de inicio de sesion.
+from django.contrib import messages
+from django.core.exceptions import ObjectDoesNotExist
+from datetime import datetime
+from django.db import connection
 def login_view(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            prestamos_listado = Prestamo.objects.all()
-            encargados_listado = Encargado.objects.all()
-            libros_listado = Libro.objects.all()
-            estudiantes_listado = Estudiante.objects.all()
-            penalizaciones = Penalizacion.objects.all()
-            return render(request, 'Gestion_prestamo.html', {"prestamos":prestamos_listado,"encargados": encargados_listado,"libros":libros_listado,"estudiantes":estudiantes_listado, "penalizaciones": penalizaciones,})  # Reemplaza 'nombre_de_la_pagina' con el nombre de la página a la que deseas redirigir
-        else:
-            # El usuario no ha proporcionado credenciales válidas
-            pass
-    
+
+        try:
+            credenciales = Credenciales.objects.get(Usuario=username, Contraseña=password)
+            encargado = Encargado.objects.get(IdEncargado=credenciales.IdEncargado_id)
+
+            request.session['IdEncargado'] = encargado.IdEncargado
+            request.session['NombreEncargado'] = encargado.Nombre
+
+            return redirect('/home')  # Reemplaza '/home' con la URL o ruta a la página principal luego del inicio de sesión
+        except Credenciales.DoesNotExist:
+            messages.error(request, 'Credenciales inválidas')
+            return redirect('/')  # Reemplaza '/' con la URL o ruta a la página de inicio de sesión
+
     return render(request, 'login.html')
 
 def prestamos_vencidos(request):
     prestamos = Prestamo.objects.filter(devolucion__Estado='No entregado')
-    encargados = Encargado.objects.all()
     libros = Libro.objects.all()
     estudiantes = Estudiante.objects.all()
-    penalizaciones = Penalizacion.objects.all()
-
-    context = {
-        'prestamos': prestamos,
-        'encargados': encargados,
-        'libros': libros,
-        'estudiantes': estudiantes,
-        'penalizaciones': penalizaciones,
-    }
-
+    actualizar_penalizacion(request)
+    context = {'prestamos': prestamos,
+                'libros': libros,
+                'estudiantes': estudiantes,
+               }
     return render(request, 'prestamos_vencidos.html', context)
 
 def home(request):
@@ -51,14 +47,17 @@ def home(request):
     libros = Libro.objects.all()
     estudiantes = Estudiante.objects.all()
     penalizaciones = Penalizacion.objects.all()
-
+    
+    actualizar_penalizacion(request)
     return render(request, 'Gestion_prestamo.html', {
         'prestamos': prestamos,
         'encargados': encargados,
         'libros': libros,
         'estudiantes': estudiantes,
         'penalizaciones': penalizaciones,
+        
     })
+
 def listarEntrega(request):
     prestamos = Prestamo.objects.all()
     encargados = Encargado.objects.all()
@@ -66,7 +65,7 @@ def listarEntrega(request):
     estudiantes = Estudiante.objects.all()
     penalizaciones = Penalizacion.objects.all()
     devoluciones = Devolucion.objects.all()
-
+    actualizar_penalizacion(request)
     # Obtener el parámetro de búsqueda si está presente en la solicitud GET
     nombre_estudiante = request.GET.get('nombre_estudiante')
 
@@ -109,6 +108,7 @@ def listar_editar_penalizacion(request):
         'penalizaciones': penalizaciones,
     }
     return render(request, 'listar_editar_penalizacion.html', context)
+
 def listar_penalizacion(request):
     penalizaciones = Penalizacion.objects.all()
     estudiantes = Estudiante.objects.all()
@@ -119,34 +119,9 @@ def listar_penalizacion(request):
     }
     return render(request, 'Penalizaciones_activas.html', context)
 
-from datetime import datetime
 
-from datetime import datetime
-def insertar_estudiante_en_penalizacion(IdPrestamo):
-    prestamo = Prestamo.objects.get(IdPrestamo=IdPrestamo)
-    devolucion = Devolucion.objects.get(IdPrestamo=IdPrestamo)
-    
-    # Obtener el objeto Estudiante a través de la relación con Prestamo
-    estudiante = prestamo.IdEstudiante
-    
-    # Verificar si ya existe una penalización para el estudiante
-    if Penalizacion.objects.filter(IdEstudiante=estudiante).exists():
-        return  # Si ya existe, no hacer nada
-    
-    # Comparar las fechas de entrega y de devolución
-    if devolucion.Fecha_entrega > prestamo.FechaDevolucion:
-        # Calcular la fecha final de penalización
-        fecha_final_penalizacion = devolucion.Fecha_entrega + timedelta(days=30)
 
-        # Crear un nuevo objeto Penalizacion
-        penalizacion = Penalizacion()
-        penalizacion.IdEstudiante = estudiante
-        penalizacion.Falseecha_inicio = prestamo.FechaDevolucion
-        penalizacion.Fecha_final = fecha_final_penalizacion
-        penalizacion.Estado = "moroso"
-
-        # Guardar el objeto Penalizacion en la base de datos
-        penalizacion.save()
+from django.shortcuts import get_object_or_404
 
 def prestamo_form(request):
     # Obtener el parámetro de búsqueda si está presente en la solicitud GET
@@ -159,22 +134,22 @@ def prestamo_form(request):
         FechaPrestamo = request.POST["fecha_prestamo"]
         FechaDevolucion = request.POST["fecha_devolucion"]
 
-        encargado = Encargado.objects.get(IdEncargado=Id_Encargado)
-        libro = Libro.objects.get(IdLibro=Id_Libro)
-        estudiante = Estudiante.objects.get(IdEstudiante=Id_Estudiante)
+        encargado = get_object_or_404(Encargado, IdEncargado=Id_Encargado)
+        libro = get_object_or_404(Libro, IdLibro=Id_Libro)
+        estudiante = get_object_or_404(Estudiante, IdEstudiante=Id_Estudiante)
 
-        # Crear el registro de préstamo
+        actualizar_penalizacion(request)
+
         prestamo = Prestamo.objects.create(IdEncargado=encargado, IdLibro=libro, IdEstudiante=estudiante,
                                            FechaPrestamo=FechaPrestamo, FechaDevolucion=FechaDevolucion)
 
-        # Obtener la fecha actual
+        libro.Cantidad -= 1
+        libro.save()
 
-        # Calcular la fecha de entrega
-        fecha_entrega = FechaDevolucion # Asumiendo una devolución después de 7 días
+        devolucion = Devolucion.objects.create(IdPrestamo=prestamo, Fecha_entrega=None, Estado="No entregado")
+        devolucion.save()
 
-        # Crear el registro de devolución
-        devolucion = Devolucion.objects.create(IdPrestamo=prestamo, Fecha_entrega=fecha_entrega, Estado="No entregado")
-
+        # Llamar a la función insertar_estudiante_en_penalizacion pasando el ID del estudiante
         return redirect('/home')
 
     prestamos = Prestamo.objects.all()
@@ -185,22 +160,18 @@ def prestamo_form(request):
     else:
         prestamos = prestamos.all()
 
+    prestamo = Prestamo.objects.all()
     encargados = Encargado.objects.all()
     libros = Libro.objects.all()
-    estudiantes = Estudiante.objects.all()
     penalizaciones = Penalizacion.objects.all()
-    devoluciones = Devolucion.objects.all()
+    estudiantes = Estudiante.objects.all()
 
-    context = {
-        'prestamos': prestamos,
-        'encargados': encargados,
-        'libros': libros,
-        'estudiantes': estudiantes,
-        'penalizaciones': penalizaciones,
-        'devoluciones': devoluciones,
-    }
+    context = {'prestamo': prestamo, 'encargados': encargados, 'libros': libros, 'estudiantes': estudiantes,
+                'penalizaciones': penalizaciones}
 
     return render(request, 'Gestion_prestamo.html', context)
+
+
 
 def listarPrestamos(request):
     prestamos = Prestamo.objects.all()
@@ -208,7 +179,7 @@ def listarPrestamos(request):
     libros = Libro.objects.all()
     estudiantes = Estudiante.objects.all()
     penalizaciones = Penalizacion.objects.all()
-
+    actualizar_penalizacion(request)
     context = {
         'prestamos': prestamos,
         'encargados': encargados,
@@ -219,11 +190,6 @@ def listarPrestamos(request):
 
     return render(request, 'Gestion_prestamo.html', context)
 
-from django.db.models import Q
-from datetime import datetime, timedelta
-
-from django.db.models import Q
-from datetime import datetime, timedelta
 
 def lista_prestamos(request):
     prestamos = Prestamo.objects.all()
@@ -262,12 +228,6 @@ def lista_prestamos(request):
 
     return render(request, 'Consultar_prestamos.html', context)
 
-
-
-    
-
-
-
 def registrar_entrega(request):
     if request.method == 'POST':
         Id_Prestamo = request.POST["prestamo"]
@@ -287,8 +247,25 @@ def registrar_entrega(request):
         'prestamos': prestamos,
     }
     return render(request, 'Gestion_entregas.html', context)
+from datetime import date
+from django.http import JsonResponse
+from .models import Devolucion, Penalizacion
 
-
+def actualizar_penalizacion(request):
+    # Obtener la fecha actual del sistema
+    fecha_actual = date.today()
+    
+    # Obtener las devoluciones con estado "No entregado", sin fecha de entrega y fecha de devolución vencida
+    devoluciones = Devolucion.objects.filter(Estado='No entregado', Fecha_entrega=None, IdPrestamo__FechaDevolucion__lt=fecha_actual)
+    
+    for devolucion in devoluciones:
+        # Obtener la penalización del estudiante relacionado
+        penalizacion = Penalizacion.objects.get(IdEstudiante=devolucion.IdPrestamo.IdEstudiante)
+        # Actualizar el estado de la penalización a "Moroso"
+        penalizacion.Estado = 'Moroso'
+        penalizacion.save()
+    
+    return JsonResponse({'success': True})
 
 
 def buscar_libros(request):
@@ -315,6 +292,8 @@ def editar_penalizacion(request, id_penalizacion):
         penalizacion.Estado = estado
         penalizacion.save()
 
+
+
         return redirect('/penalizaciones', id_penalizacion=penalizacion.IdPenalizacion)
     penalizaciones = Penalizacion.objects.all()
     context = {
@@ -322,6 +301,8 @@ def editar_penalizacion(request, id_penalizacion):
     }
 
     return render(request, 'editar_penalizacion.html', {'penalizacion': penalizacion})
+
+
 def eliminarprestamo(request, IdPrestamo):
     prestamo= Prestamo.objects.get(IdPrestamo=IdPrestamo)
     prestamo.delete()
@@ -341,12 +322,13 @@ def insertar_prestamo(request):
     prestamo = Prestamo.objects.all()
     encargados = Encargado.objects.all()
     libros = Libro.objects.all()
-    estudiantes = Estudiante.objects.all()
     penalizaciones = Penalizacion.objects.all()
+    estudiantes = Estudiante.objects.all()
 
     context = {'prestamo': prestamo,'encargados': encargados,'libros': libros,'estudiantes': estudiantes,'penalizaciones': penalizaciones,}
 
     return render(request, 'ingresar_prestamos.html', context)
+
 def editar_prestamo(request, IdPrestamo):
     prestamo = Prestamo.objects.get(IdPrestamo=IdPrestamo)
 
@@ -368,7 +350,7 @@ def editar_prestamo(request, IdPrestamo):
         prestamo.FechaPrestamo = FechaPrestamo
         prestamo.FechaDevolucion = FechaDevolucion
         prestamo.save()
-        return redirect('/editar_prestamo')
+        return redirect('/home')
     # Si la solicitud es GET, renderizar el formulario de edición con los datos actuales del préstamo
     encargados = Encargado.objects.all()
     libros = Libro.objects.all()
@@ -377,6 +359,8 @@ def editar_prestamo(request, IdPrestamo):
     context = {'prestamo': prestamo,'encargados': encargados,'libros': libros,'estudiantes': estudiantes,}
 
     return render(request, 'Editar_Prestamo.html', context)
+
+from django.shortcuts import get_object_or_404
 
 def editar_entrega(request, IdDevolucion):
     if request.method == 'POST':
@@ -387,11 +371,22 @@ def editar_entrega(request, IdDevolucion):
         entrega.Estado = request.POST['estado']
 
         id_prestamo = int(request.POST['prestamo'])
-        prestamo = Prestamo.objects.get(IdPrestamo=id_prestamo)
+        prestamo = get_object_or_404(Prestamo, IdPrestamo=id_prestamo)
         entrega.IdPrestamo = prestamo
 
         entrega.save()
-        insertar_estudiante_en_penalizacion(Id_Prestamo=entrega.IdPrestamo.IdPrestamo)
+
+        # Verificar si el estado es "Entregado" y actualizar la cantidad del libro
+        if entrega.Estado == "Entregado":
+            libro = prestamo.IdLibro
+            libro.Cantidad += 1
+            libro.save()
+
+            # Actualizar el estado de la tabla penalizacion a "Apto"
+            id_estudiante = prestamo.IdEstudiante_id
+            penalizacion = Penalizacion.objects.get(IdEstudiante_id=id_estudiante)
+            penalizacion.Estado = "Apto"
+            penalizacion.save()
 
         return redirect('/Entregas')
 
@@ -411,11 +406,3 @@ def listar_libros(request):
     }
     return render(request, 'listar_libros.html', context)
 
-#lista de estudiantes mediante API
-def Listar_estudiantes(request):
-    api_url = "http://127.0.0.1:8010/estudiantes/"
-    response = requests.get(api_url)
-    if response.status_code == 200:
-        data = response.json()
-        return render(request, 'Lista_Estudiantes.html', {'posts': data})
-    return render(request, 'error.html', {'message': 'Error al obtener los datos de la API'})

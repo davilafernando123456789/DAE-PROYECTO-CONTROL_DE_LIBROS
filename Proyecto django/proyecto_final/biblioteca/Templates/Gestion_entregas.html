@@ -1,20 +1,25 @@
-{% extends 'base.html' %}
-{% block title %}Gestión de entregas{% endblock %}
+{% extends 'base3.html' %}
+{% block title %}
+<style>
+    .page-title {
+        color: blue;
+        text-align: center;
+    }
+</style>
+<h1 class="page-title">Gestión de entregas</h1>
+{% endblock %}
 
 {% block body %}
 
 <div class="container">
-    <div class="row">   
-        <div class="col-sm-12 col-md-6 col-lg-8 col-xl-8">
-            <form class="d-flex" role="search" action="" method="GET">
-                <input class="form-control me-2" type="search" placeholder="Buscar por nombre de estudiante" aria-label="Search" name="nombre_estudiante" id="search-input">
-                <button class="btn btn-outline-success" type="submit">Buscar</button>
-            </form>
-        <h2>Listado de Devoluciones</h2>
-        <table id="tabla-devoluciones" class="table table-dark table-sm">
+    <div class="row">
+        <form class="d-flex" role="search" action="" method="GET"></form>
+        <div class="container">
+            <div class="row">
+        <table id="tabla-devoluciones"  class="table table-primary  table-sm">
             <thead>
                 <tr>
-                    <th>#</th>
+                    <th>Codigo</th>
                     <th>Estudiante</th>
                     <th>Libro</th>
                     <th>Inicio Prestamo</th>
@@ -41,7 +46,8 @@
             </tbody>
         </table>
     </div>
-    </div>
+</div>
+</div>
 </div>
 
 

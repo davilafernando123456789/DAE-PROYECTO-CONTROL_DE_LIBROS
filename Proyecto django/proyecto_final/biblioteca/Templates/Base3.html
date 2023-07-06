@@ -23,7 +23,12 @@
     <!-- Template Stylesheet -->
     {% load static %}
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
-      
+    
+    
+
+
+    
+    
 </head>
 
 <body>
@@ -54,7 +59,7 @@
                 </div>
                 <div class="navbar-nav w-100">
                     <a href="/home" class="nav-item nav-link link"><i class="fa fa-tachometer-alt me-2"></i>Prestamos</a>
-                    <a href="/Entregas" class="nav-item nav-link"><i class="bi bi-journal-bookmark"></i>Entregas</a>
+                    <a href="/Entregas" class="nav-item nav-link"><i class="bi bi-journal-bookmark"></i></i>Entregas</a>
                     <a href="/insertar_prestamo" class="nav-item nav-link"><i class="fa fa-keyboard me-2"></i>Insertar prestamo</a>
                     <a href="/penalizaciones" class="nav-item nav-link"><i class="bi bi-journal-minus"></i></i>Penalizaciones</a>
                 </div>
@@ -72,11 +77,28 @@
                 </a>
                 <form class="d-none d-md-flex ms-4">
                     <form class="d-flex" role="search" action="" method="GET">
-                        <input class="form-control me-2" type="search" placeholder="Buscar por nombre de estudiante o título de libro" aria-label="Search" >
+                        <input class="form-control me-2" type="search" placeholder="Buscar por nombre de estudiante" aria-label="Search" name="nombre_estudiante" id="search-input">
                         <button class="btn btn-outline-success" type="submit">Buscar</button>
                     </form>
                     
                 </form>
+                <script>
+                    $(document).ready(function() {
+                        $('#search-input').on('input', function() {
+                            var query = $(this).val().toLowerCase();
+                            $('#tabla-devoluciones tbody tr').hide();
+                
+                            $('#tabla-devoluciones tbody tr').each(function() {
+                                var estudiante = $(this).find('td:eq(1)').text().toLowerCase();
+                                var libro = $(this).find('td:eq(2)').text().toLowerCase();
+                
+                                if (estudiante.includes(query) || libro.includes(query)) {
+                                    $(this).show();
+                                }
+                            });
+                        });
+                    });
+                </script>
                 <!-- FILTROS-->
                 <div class="navbar-nav align-items-center ms-auto">
                     <div class="nav-item dropdown">
@@ -101,7 +123,7 @@
                                 <h6 class="fw-normal mb-0" id="filtro2">Prestamos activos</h6>
                             </a>
 
-    
+                            
     
                         </div>
                     </div>

@@ -7,25 +7,23 @@
 {% block body %}
 
 <div class="col-sm-12 col-md-6 col-lg-8 col-xl-8"  id="tabla-penalizaciones">
-    <h3> Penalizaciones activas</h3>
-    <table class="table table-dark table-sm" >
+    <h3 class="text-center"> Penalizaciones activas</h3>
+    <table class="table table-bordered" >
         <thead>
             <tr>
                 <th>Codigo</th>
                 <th>Estudiante</th>
-                <th>F. Inicio</th>
-                <th>F. Final</th>
                 <th>Estado</th>
             </tr>
         </thead>
         <tbody>
             {% for p in penalizaciones %}
-                    <td>{{ p.IdPenalizacion }}</td>
-                    <td>{{ p.IdEstudiante.Nombre }}</td>
-                    <td>{{ p.Falseecha_inicio }}</td>
-                    <td>{{ p.Fecha_final }}</td>
-                    <td>{{ p.Estado }}</td>
-                </tr>
+                {% if p.Estado == "Moroso" %}
+                        <td>{{ p.IdPenalizacion }}</td>
+                        <td>{{ p.IdEstudiante.Nombre }}</td>
+                        <td>{{ p.Estado }}</td>
+                    </tr>
+                {% endif %}
             {% endfor %}
         </tbody>
     </table>

@@ -28,10 +28,10 @@
                 <select id="id_estado" name="estado" class="form-select" required>
                     {% if devolucion.Estado == 'Entregado' %}
                         <option value="Entregado" selected>Entregado</option>
-                        <option value="Falta entregar">Falta entregar</option>
+                        <option value="Falta entregar">No entregado</option>
                     {% else %}
                         <option value="Entregado">Entregado</option>
-                        <option value="Falta entregar" selected>Falta entregar</option>
+                        <option value="Falta entregar" selected>No entregado</option>
                     {% endif %}
                 </select>
             </div>

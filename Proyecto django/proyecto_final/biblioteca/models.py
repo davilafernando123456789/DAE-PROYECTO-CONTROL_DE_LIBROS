@@ -64,7 +64,7 @@ class Prestamo(models.Model):
 class Devolucion(models.Model):
     IdDevolucion = models.AutoField(primary_key=True)
     IdPrestamo = models.OneToOneField(Prestamo, on_delete=models.CASCADE)
-    Fecha_entrega = models.DateField()
+    Fecha_entrega = models.DateField(null=True) 
     Estado = models.CharField(max_length=50)
 
     def __str__(self):
@@ -74,24 +74,11 @@ class Devolucion(models.Model):
 class Penalizacion(models.Model):
     IdPenalizacion = models.AutoField(primary_key=True)
     IdEstudiante = models.OneToOneField('Estudiante', on_delete=models.CASCADE)
-    Falseecha_inicio = models.DateField()
-    Fecha_final = models.DateField()
     Estado = models.CharField(max_length=50)
 
     def __str__(self):
         return f"Penalizacion {self.IdPenalizacion}"
 
-
-    @property
-    def calcular_estado(self):
-        fecha_actual = datetime.now().date()
-
-        if fecha_actual > self.Fecha_final:
-            self.Estado = 'Moroso'
-        else:
-            self.Estado = 'Apto'
-
-        return self.Estado
     
 class Estudiante(models.Model):
     IdEstudiante = models.AutoField(primary_key=True)
@@ -106,6 +93,18 @@ class Estudiante(models.Model):
         return self.Nombre
 
 
+class Credenciales(models.Model):
+    IdCredenciales = models.AutoField(primary_key=True)
+    Usuario = models.CharField(max_length=50)
+    Contraseña = models.CharField(max_length=50)
+    IdEncargado = models.OneToOneField('Encargado', on_delete=models.CASCADE)
+
+
+    def __str__(self):
+        return self.Usuario
+    
+
+
 class Encargado(models.Model):
     IdEncargado = models.AutoField(primary_key=True)
     Nombre = models.CharField(max_length=100)
@@ -113,16 +112,7 @@ class Encargado(models.Model):
     Direccion = models.CharField(max_length=200)
     Telefono = models.CharField(max_length=20)
     Correo = models.EmailField()
-    IdCredenciales = models.OneToOneField('Credenciales', on_delete=models.CASCADE)
+    
 
     def __str__(self):
         return self.Nombre
-
-
-class Credenciales(models.Model):
-    IdCredenciales = models.AutoField(primary_key=True)
-    Usuario = models.CharField(max_length=50)
-    Contraseña = models.CharField(max_length=50)
-
-    def __str__(self):
-        return self.Usuario

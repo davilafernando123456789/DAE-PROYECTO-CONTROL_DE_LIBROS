@@ -1,41 +1,42 @@
 <!-- listar_devoluciones.html -->
 
-{% extends 'base.html' %}
+{% extends 'base4.html' %}
 
 {% block title %}Lista de penalizaciones{% endblock %}
 
 {% block body %}
-
+<div class="row">
 <div class="col-sm-12 col-md-6 col-lg-8 col-xl-8">
     <form class="d-flex" role="search" action="" method="GET">
-        <input class="form-control me-2" type="search" placeholder="Buscar por nombre de estudiante" aria-label="Search" name="nombre_estudiante">
+        <input id="search-input" class="form-control me-2" type="search" placeholder="Buscar por nombre de estudiante" aria-label="Search" name="nombre_estudiante">
+
         <button class="btn btn-outline-success" type="submit">Buscar</button>
     </form>
-    <h2>Listado de Penalizaciones</h2>
-    <table id="tabla-devoluciones" class="table table-dark table-sm">
+    <table id="tabla-devoluciones" class="table table-primary  table-sm">
         <thead>
             <tr>
-                <th>#</th>
+                <th>Codigo</th>
                 <th>Estudiante</th>
-                <th>F. Inicio</th>
-                <th>F. Final</th>
                 <th>Estado</th>
                 <th colspan="2">Opciones de Manejo</th>
             </tr>
         </thead>
         <tbody>
             {% for p in penalizaciones %}
-                <tr onclick="cargarDatosDevolucion(event)" style="cursor: pointer;">
-                    <td>{{ p.IdPenalizacion }}</td>
-                    <td>{{ p.IdEstudiante.Nombre }}</td>
-                    <td>{{ p.Falseecha_inicio }}</td>
-                    <td>{{ p.Fecha_final }}</td>
-                    <td>{{ p.Estado }}</td>
-                    <td><a href="/editar_penalizacion/{{  p.IdPenalizacion }}" class="btn btn-info">Editar</a></td>
-                    <td><a href="/eliminarpenalizacion/{{ p.IdPenalizacion }}" class="btn btn-danger">Eliminar</a></td>
-                </tr>
+                {% if p.Estado == "Moroso" %}
+                        <td>{{ p.IdPenalizacion }}</td>
+                        <td>{{ p.IdEstudiante.Nombre }}</td>
+                        <td>{{ p.Estado }}</td>
+                        <td><a href="/editar_penalizacion/{{  p.IdPenalizacion }}" class="btn btn-info">Editar</a></td>
+                        <td><a href="/eliminarpenalizacion/{{ p.IdPenalizacion }}" class="btn btn-danger">Eliminar</a></td>
+                    </tr>
+                {% endif %}
             {% endfor %}
         </tbody>
     </table>
 </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
 {% endblock %}
